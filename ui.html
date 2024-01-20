@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Ticketing System</title>
+    <!-- Add your CSS stylesheets or links here -->
+    <style>
+        /* Add your custom styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        section {
+            margin: 20px;
+        }
+
+        .event-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+
+        .cart {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Event Ticketing System</h1>
+    </header>
+
+    <section id="events">
+        <h2>Browse Events</h2>
+        <!-- Display events here using a loop or dynamically generated content -->
+        <div class="event-card">
+            <h3>Event 1</h3>
+            <p>Date: January 25, 2024</p>
+            <p>Price: $20.00</p>
+            <button>Add to Cart</button>
+        </div>
+
+        <div class="event-card">
+            <h3>Event 2</h3>
+            <p>Date: February 10, 2024</p>
+            <p>Price: $15.00</p>
+            <button>Add to Cart</button>
+        </div>
+        <!-- Repeat for other events -->
+    </section>
+
+    <section id="cart">
+        <h2>Shopping Cart</h2>
+        <div class="cart">
+            <!-- Display items in the cart here -->
+            <p>Event 1 - $20.00</p>
+            <p>Event 2 - $15.00</p>
+            <hr>
+            <p>Total: $35.00</p>
+            <button>Checkout</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Event Ticketing System</p>
+    </footer>
+
+</body>
+
+</html>
