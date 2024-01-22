@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Ticketing System</title>
-    <!-- Add your CSS stylesheets or links here -->
     <style>
-        /* Add your custom styles here */
+        /* Your CSS styles here */
+         /* Add your custom styles here */
         body {
             font-family: Arial, sans-serif;
         }
@@ -59,38 +59,80 @@
 
     <section id="events">
         <h2>Browse Events</h2>
-        <!-- Display events here using a loop or dynamically generated content -->
-        <div class="event-card">
-            <h3>Event 1</h3>
-            <p>Date: January 25, 2024</p>
-            <p>Price: $20.00</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="event-card">
-            <h3>Event 2</h3>
-            <p>Date: February 10, 2024</p>
-            <p>Price: $15.00</p>
-            <button>Add to Cart</button>
-        </div>
-        <!-- Repeat for other events -->
+        <!-- Events will be dynamically populated here -->
     </section>
 
     <section id="cart">
         <h2>Shopping Cart</h2>
         <div class="cart">
             <!-- Display items in the cart here -->
-            <p>Event 1 - $20.00</p>
-            <p>Event 2 - $15.00</p>
+            <p id="cart-items">No items in the cart</p>
             <hr>
-            <p>Total: $35.00</p>
-            <button>Checkout</button>
+            <p>Total: $<span id="cart-total">0.00</span></p>
+            <button onclick="checkout()">Checkout</button>
         </div>
     </section>
 
     <footer>
         <p>&copy; 2024 Event Ticketing System</p>
     </footer>
+
+    <script>
+        // Your JavaScript code here
+    
+        async function fetchEvents() {
+            try {
+                const response = await fetch('/api/events');
+                
+                if (!response.ok) {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+        
+                const events = await response.json();
+        
+                const eventsSection = document.getElementById('events');
+        
+                if (!Array.isArray(events)) {
+                    eventsSection.innerHTML = '<p>Error fetching events</p>';
+                } else if (events.length === 0) {
+                    eventsSection.innerHTML = '<p>No events available</p>';
+                } else {
+                    eventsSection.innerHTML = ''; // Clear previous content
+                    
+                    events.forEach(event => {
+                        const eventCard = document.createElement('div');
+                        eventCard.className = 'event-card';
+                        eventCard.innerHTML = `
+                            <h3>${event.event_name || 'Unknown Event'}</h3>
+                            <p>Date: ${event.event_date || 'Unknown Date'}</p>
+                            <p>Time: ${event.event_time || 'Unknown Time'}</p>
+                            <p>Address: ${event.event_adress || 'Unknown Address'}</p>
+                            <p>Category: ${event.event_category || 'Unknown Category'}</p>
+                            <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
+                            <button onclick="addToCart(${event.event_id})">Add to Cart</button>
+                        `;
+                        eventsSection.appendChild(eventCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        }
+        
+    
+        async function addToCart(eventId) {
+            // Implement adding an item to the cart
+            console.log(`Added event with ID ${eventId} to the cart`);
+        }
+    
+        function checkout() {
+            // Implement the checkout functionality
+            console.log('Checkout button clicked');
+        }
+    
+        // Call the fetchEvents function when the page loads
+        window.addEventListener('load', fetchEvents);
+    </script>
 
 </body>
 
