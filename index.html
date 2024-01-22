@@ -7,7 +7,7 @@
     <title>Event Ticketing System</title>
     <style>
         /* Your CSS styles here */
-         /* Add your custom styles here */
+        /* Add your custom styles here */
         body {
             font-family: Arial, sans-serif;
         }
@@ -79,26 +79,26 @@
 
     <script>
         // Your JavaScript code here
-    
+
         async function fetchEvents() {
             try {
                 const response = await fetch('/api/events');
-                
+
                 if (!response.ok) {
                     throw new Error(`Server responded with status: ${response.status}`);
                 }
-        
+
                 const events = await response.json();
-        
+
                 const eventsSection = document.getElementById('events');
-        
+
                 if (!Array.isArray(events)) {
                     eventsSection.innerHTML = '<p>Error fetching events</p>';
                 } else if (events.length === 0) {
                     eventsSection.innerHTML = '<p>No events available</p>';
                 } else {
                     eventsSection.innerHTML = ''; // Clear previous content
-                    
+
                     events.forEach(event => {
                         const eventCard = document.createElement('div');
                         eventCard.className = 'event-card';
@@ -118,18 +118,18 @@
                 console.error('Error fetching events:', error);
             }
         }
-        
-    
+
+
         async function addToCart(eventId) {
             // Implement adding an item to the cart
             console.log(`Added event with ID ${eventId} to the cart`);
         }
-    
+
         function checkout() {
             // Implement the checkout functionality
             console.log('Checkout button clicked');
         }
-    
+
         // Call the fetchEvents function when the page loads
         window.addEventListener('load', fetchEvents);
     </script>

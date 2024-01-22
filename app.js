@@ -1,13 +1,14 @@
 const db = require('./db');
+const bcrypt = require('bcrypt');
 
 async function getAllEvents() {
   try {
-    console.log('Executing query: SELECT * FROM Event'); // Update table name to 'Event'
-    const results = await db.query('SELECT * FROM Event'); // Update table name to 'Event'
+    console.log('Executing query: SELECT * FROM Event');
+    const results = await db.query('SELECT * FROM Event');
     return results;
   } catch (error) {
     console.error('Error executing query:', error);
-    throw error; // Re-throw the error to propagate it to the caller
+    throw error;
   }
 }
 
@@ -19,11 +20,8 @@ async function main() {
   } catch (error) {
     console.error('Error in main function:', error);
   } finally {
-    // Ensure to close the database connection after use
     db.end();
   }
 }
 
-// Run the main function
 main();
-
