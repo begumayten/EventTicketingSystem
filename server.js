@@ -26,17 +26,29 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // Perform your authentication logic here using username and password
-    // If authentication is successful, redirect to index.html
-    // Otherwise, you can handle unsuccessful login appropriately
+    try {
+        const connection = await mysql.createConnection(dbConfig);
 
-    // For demonstration purposes, assuming authentication is always successful
-    if (username === 'demo' && password === 'demo') {
-        res.redirect('/index');
-    } else {
-        res.send('Login unsuccessful. Please try again.');
+        // Check if the provided username and password match a user in the database
+        const [rows] = await connection.query(`
+            SELECT * FROM User WHERE user_name = ? AND user_password = ?
+        `, [username, password]);
+
+        connection.end();
+
+        if (rows.length > 0) {
+            // Authentication successful, redirect to index.html
+            res.redirect('/index');
+        } else {
+            // Authentication unsuccessful, send an error message
+            res.status(401).send('Invalid username or password. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 });
+
 
 // Serve index.html after successful login
 app.get('/index', (req, res) => {
