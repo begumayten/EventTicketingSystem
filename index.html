@@ -102,9 +102,12 @@
                     events.forEach(event => {
                         const eventCard = document.createElement('div');
                         eventCard.className = 'event-card';
+                        
+                        const formattedDate = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'Unknown Date';
+                        
                         eventCard.innerHTML = `
                             <h3>${event.event_name || 'Unknown Event'}</h3>
-                            <p>Date: ${event.event_date || 'Unknown Date'}</p>
+                            <p>Date: ${formattedDate}</p>
                             <p>Time: ${event.event_time || 'Unknown Time'}</p>
                             <p>Address: ${event.event_adress || 'Unknown Address'}</p>
                             <p>Category: ${event.event_category || 'Unknown Category'}</p>
