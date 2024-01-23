@@ -43,16 +43,21 @@ app.get('/index', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-// Get all events
+
 app.get('/api/events', async (req, res) => {
     try {
-        const connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.query('SELECT * FROM Event');
-        connection.end();
-        res.json(rows);
+    const connection = await mysql.createConnection(dbConfig);
+    const [rows] = await connection.query(`
+        SELECT DISTINCT E.*, T.ticket_price
+        FROM Event E
+        JOIN Event_Has_Tickets EHT ON E.event_id = EHT.event_id
+        JOIN Ticket T ON EHT.ticket_id = T.ticket_id
+    `);
+    connection.end();
+    res.json(rows);
     } catch (error) {
-        console.error('Error fetching events:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error fetching events:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
