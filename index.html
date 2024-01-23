@@ -110,36 +110,37 @@
                 const eventsResponse = await fetch('/api/events');
                 const eventsData = await eventsResponse.json();
                 displayEvents('events', eventsData);
-    
+        
                 // Fetch data for user event history
-                const userEventHistoryResponse = await fetch('/api/user-event-history/1'); // Replace '1' with the actual user ID
+                const userEventHistoryResponse = await fetch('/api/user-event-history');
                 const userEventHistoryData = await userEventHistoryResponse.json();
                 displayData('userEventHistoryList', userEventHistoryData);
-    
+        
                 // Fetch data for event total revenue for all events
                 const allEventTotalRevenueResponse = await fetch('/api/all-event-total-revenue');
                 const allEventTotalRevenueData = await allEventTotalRevenueResponse.json();
                 displayRevenue('eventTotalRevenueList', allEventTotalRevenueData);
-
+        
                 // Fetch data for events above average price
                 const eventsAboveAveragePriceResponse = await fetch('/api/events-above-average-price');
                 const eventsAboveAveragePriceData = await eventsAboveAveragePriceResponse.json();
                 displayData('eventsAboveAveragePriceList', eventsAboveAveragePriceData);
-    
+        
                 // Fetch data for events with no tickets sold
                 const eventsWithNoTicketsSoldResponse = await fetch('/api/events-with-no-tickets-sold');
                 const eventsWithNoTicketsSoldData = await eventsWithNoTicketsSoldResponse.json();
                 displayData('eventsWithNoTicketsSoldList', eventsWithNoTicketsSoldData);
-    
+        
                 // Fetch data for users who bought concert tickets
                 const usersWhoBoughtConcertTicketsResponse = await fetch('/api/users-who-bought-concert-tickets');
                 const usersWhoBoughtConcertTicketsData = await usersWhoBoughtConcertTicketsResponse.json();
                 displayData('usersWhoBoughtConcertTicketsList', usersWhoBoughtConcertTicketsData);
-    
+        
             } catch (error) {
                 console.error('Error fetching and displaying data:', error);
             }
         }
+        
         function displayRevenue(containerId, data) {
             const container = document.getElementById(containerId);
         

@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,8 +16,24 @@ const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
     password: 'emre12',
-    database: 'ticket'
+    database: 'ticket',
 };
+
+// Set up session store
+const sessionStore = new MySQLStore({
+    host: dbConfig.host,
+    port: dbConfig.port || 3306,
+    user: dbConfig.user,
+    password: dbConfig.password,
+    database: dbConfig.database,
+});
+
+app.use(session({
+    secret: 'your-secret-key', // Change this to a random, secure string
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+}));
 
 // Serve login.html initially
 app.get('/', (req, res) => {
@@ -31,13 +49,14 @@ app.post('/login', async (req, res) => {
 
         // Check if the provided username and password match a user in the database
         const [rows] = await connection.query(`
-            SELECT * FROM User WHERE user_name = ? AND user_password = ?
+            SELECT user_id FROM User WHERE user_name = ? AND user_password = ?
         `, [username, password]);
 
         connection.end();
 
         if (rows.length > 0) {
-            // Authentication successful, redirect to index.html
+            // Authentication successful, store the user ID in the session
+            req.session.userId = rows[0].user_id;
             res.redirect('/index');
         } else {
             // Authentication unsuccessful, send an error message
@@ -49,11 +68,19 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
 // Serve index.html after successful login
 app.get('/index', (req, res) => {
+    // Check if the user is logged in (user ID is stored in the session)
+    if (!req.session.userId) {
+        // Redirect to the login page if not logged in
+        res.redirect('/');
+        return;
+    }
+
+    // Render the index.html page and pass the user ID to the template
     res.sendFile(__dirname + '/index.html');
 });
+
 
 // Get all events
 app.get('/api/events', async (req, res) => {
@@ -88,9 +115,15 @@ app.get('/api/events', async (req, res) => {
 
 
 // Get the history of events a user has tickets for
-app.get('/api/user-event-history/:userId', async (req, res) => {
+app.get('/api/user-event-history', async (req, res) => {
     try {
-        const userId = req.params.userId;
+        // Check if the user is logged in (user ID is stored in the session)
+        if (!req.session.userId) {
+            // Return an empty array if not logged in
+            return res.json([]);
+        }
+
+        const userId = req.session.userId; // Retrieve user ID from session
         const connection = await mysql.createConnection(dbConfig);
         const [rows] = await connection.query(`
             SELECT E.event_name, E.event_date, E.event_time, E.event_adress, E.event_category
@@ -110,6 +143,7 @@ app.get('/api/user-event-history/:userId', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 // Calculates the total revenue generated from ticket sales for all events
 app.get('/api/all-event-total-revenue', async (req, res) => {
