@@ -28,25 +28,26 @@
             padding: 10px;
             margin: 10px;
             display: inline-block;
-            width: 200px;
+            width: 250px;
             text-align: center;
         }
 
-        .cart {
+        .query-result {
+            margin-top: 20px;
+        }
+
+        .query-result-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .query-result-item {
             border: 1px solid #ddd;
             padding: 10px;
             margin: 10px;
+            width: 200px;
             text-align: center;
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
         }
     </style>
 </head>
@@ -62,14 +63,39 @@
         <!-- Events will be dynamically populated here -->
     </section>
 
-    <section id="cart">
-        <h2>Shopping Cart</h2>
-        <div class="cart">
-            <!-- Display items in the cart here -->
-            <p id="cart-items">No items in the cart</p>
-            <hr>
-            <p>Total: $<span id="cart-total">0.00</span></p>
-            <button onclick="checkout()">Checkout</button>
+    <!-- New sections for displaying query results -->
+    <section id="userEventHistory" class="query-result">
+        <h2>User Event History</h2>
+        <div id="userEventHistoryList" class="query-result-list">
+            <!-- User event history will be dynamically populated here -->
+        </div>
+    </section>
+
+    <section id="eventTotalRevenue" class="query-result">
+        <h2>Event Total Revenue</h2>
+        <div id="eventTotalRevenueList" class="query-result-list">
+            <!-- Event total revenue will be dynamically populated here -->
+        </div>
+    </section>
+
+    <section id="eventsAboveAveragePrice" class="query-result">
+        <h2>Events Above Average Price</h2>
+        <div id="eventsAboveAveragePriceList" class="query-result-list">
+            <!-- Events above average price will be dynamically populated here -->
+        </div>
+    </section>
+
+    <section id="eventsWithNoTicketsSold" class="query-result">
+        <h2>Events With No Tickets Sold</h2>
+        <div id="eventsWithNoTicketsSoldList" class="query-result-list">
+            <!-- Events with no tickets sold will be dynamically populated here -->
+        </div>
+    </section>
+
+    <section id="usersWhoBoughtConcertTickets" class="query-result">
+        <h2>Users Who Bought Concert Tickets</h2>
+        <div id="usersWhoBoughtConcertTicketsList" class="query-result-list">
+            <!-- Users who bought concert tickets will be dynamically populated here -->
         </div>
     </section>
 
@@ -78,64 +104,105 @@
     </footer>
 
     <script>
-        // Your JavaScript code here
-
-        async function fetchEvents() {
+        async function fetchAndDisplayData() {
             try {
-                const response = await fetch('/api/events');
-
-                if (!response.ok) {
-                    throw new Error(`Server responded with status: ${response.status}`);
-                }
-
-                const events = await response.json();
-
-                const eventsSection = document.getElementById('events');
-
-                if (!Array.isArray(events)) {
-                    eventsSection.innerHTML = '<p>Error fetching events</p>';
-                } else if (events.length === 0) {
-                    eventsSection.innerHTML = '<p>No events available</p>';
-                } else {
-                    eventsSection.innerHTML = ''; // Clear previous content
-
-                    events.forEach(event => {
-                        const eventCard = document.createElement('div');
-                        eventCard.className = 'event-card';
-                        
-                        const formattedDate = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'Unknown Date';
-                        
-                        eventCard.innerHTML = `
-                            <h3>${event.event_name || 'Unknown Event'}</h3>
-                            <p>Date: ${formattedDate}</p>
-                            <p>Time: ${event.event_time || 'Unknown Time'}</p>
-                            <p>Address: ${event.event_adress || 'Unknown Address'}</p>
-                            <p>Category: ${event.event_category || 'Unknown Category'}</p>
-                            <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
-                            <button onclick="addToCart(${event.event_id})">Add to Cart</button>
-                        `;
-                        eventsSection.appendChild(eventCard);
-                    });
-                }
+                // Fetch data for events
+                const eventsResponse = await fetch('/api/events');
+                const eventsData = await eventsResponse.json();
+                displayEvents('events', eventsData);
+    
+                // Fetch data for user event history
+                const userEventHistoryResponse = await fetch('/api/user-event-history/1'); // Replace '1' with the actual user ID
+                const userEventHistoryData = await userEventHistoryResponse.json();
+                displayData('userEventHistoryList', userEventHistoryData);
+    
+                // Fetch data for event total revenue
+                const eventTotalRevenueResponse = await fetch('/api/event-total-revenue/1'); // Replace '1' with the actual event ID
+                const eventTotalRevenueData = await eventTotalRevenueResponse.json();
+                displayData('eventTotalRevenueList', eventTotalRevenueData);
+    
+                // Fetch data for events above average price
+                const eventsAboveAveragePriceResponse = await fetch('/api/events-above-average-price');
+                const eventsAboveAveragePriceData = await eventsAboveAveragePriceResponse.json();
+                displayData('eventsAboveAveragePriceList', eventsAboveAveragePriceData);
+    
+                // Fetch data for events with no tickets sold
+                const eventsWithNoTicketsSoldResponse = await fetch('/api/events-with-no-tickets-sold');
+                const eventsWithNoTicketsSoldData = await eventsWithNoTicketsSoldResponse.json();
+                displayData('eventsWithNoTicketsSoldList', eventsWithNoTicketsSoldData);
+    
+                // Fetch data for users who bought concert tickets
+                const usersWhoBoughtConcertTicketsResponse = await fetch('/api/users-who-bought-concert-tickets');
+                const usersWhoBoughtConcertTicketsData = await usersWhoBoughtConcertTicketsResponse.json();
+                displayData('usersWhoBoughtConcertTicketsList', usersWhoBoughtConcertTicketsData);
+    
             } catch (error) {
-                console.error('Error fetching events:', error);
+                console.error('Error fetching and displaying data:', error);
+            }
+        }
+        function displayData(containerId, data) {
+            const container = document.getElementById(containerId);
+    
+            if (Array.isArray(data)) {
+                container.innerHTML = ''; // Clear previous content
+    
+                data.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'query-result-item';
+    
+                    // Display only user names
+                    itemElement.innerHTML = `
+                        <p>${item.user_name || 'Unknown User'}</p>
+                    `;
+    
+                    container.appendChild(itemElement);
+                });
+            } else {
+                container.innerHTML = '<p>No data available</p>';
             }
         }
 
-
+        function displayEvents(containerId, events) {
+            const container = document.getElementById(containerId);
+    
+            if (Array.isArray(events)) {
+                container.innerHTML = ''; // Clear previous content
+    
+                events.forEach(event => {
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+    
+                    const formattedDate = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'Unknown Date';
+    
+                    eventCard.innerHTML = `
+                        <h3>${event.event_name || 'Unknown Event'}</h3>
+                        <p>Date: ${formattedDate}</p>
+                        <p>Time: ${event.event_time || 'Unknown Time'}</p>
+                        <p>Address: ${event.event_address || 'Unknown Address'}</p>
+                        <p>Category: ${event.event_category || 'Unknown Category'}</p>
+                        <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
+                    `;
+                    container.appendChild(eventCard);
+                });
+            } else {
+                container.innerHTML = '<p>No events available</p>';
+            }
+        }
+    
         async function addToCart(eventId) {
             // Implement adding an item to the cart
             console.log(`Added event with ID ${eventId} to the cart`);
         }
-
+    
         function checkout() {
             // Implement the checkout functionality
             console.log('Checkout button clicked');
         }
-
-        // Call the fetchEvents function when the page loads
-        window.addEventListener('load', fetchEvents);
+    
+        // Call the fetchAndDisplayData function when the page loads
+        window.addEventListener('load', fetchAndDisplayData);
     </script>
+    
 
 </body>
 
