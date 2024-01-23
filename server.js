@@ -111,7 +111,7 @@ app.get('/api/events-above-average-price', async (req, res) => {
     try {
         const connection = await mysql.createConnection(dbConfig);
         const [rows] = await connection.query(`
-            SELECT E.event_id, E.event_name
+            SELECT E.event_id, E.event_name, E.event_date, E.event_time, E.event_adress, E.event_category
             FROM Event E
             WHERE EXISTS (
                 SELECT 1
@@ -136,7 +136,7 @@ app.get('/api/events-with-no-tickets-sold', async (req, res) => {
     try {
         const connection = await mysql.createConnection(dbConfig);
         const [rows] = await connection.query(`
-            SELECT E.event_id, E.event_name
+            SELECT E.event_id, E.event_name, E.event_date, E.event_time, E.event_adress, E.event_category
             FROM Event E
             WHERE NOT EXISTS (
                 SELECT 1
