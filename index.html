@@ -61,33 +61,7 @@
             border-radius: 8px; 
         }
 
-       .navbar {
-            background-color: #333; 
-            color: white;
-            padding: 0.5rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-        }
-
-        .nav-links a {
-            color: white;
-            padding: 0.5rem;
-            margin-left: 10px;
-            text-decoration: none;
-            border: 1px solid #4F4F4F; 
-            border-radius: 5px;
-        }
-
-        .nav-links a:hover {
-            background-color: #0D6EFD;
-            color: #333;
-            transition: 0.3s;
-        }
+       
 
     </style>
 </head>
@@ -95,24 +69,10 @@
 <body>
 
     <header>
-        <div class="navbar">
             <h1>Event Ticketing System</h1>
-            <div class="nav-links">
-                <a href="cart.html" class="cart-link">View Cart</a>
-                <!-- You can add more navigation links here if needed -->
-            </div>
-        </div>
-        <!-- Rest of your header content -->
     </header>
-    
-    <section id="cartItems" class="query-result">
-        <h2>Cart Items</h2>
-        <div id="cartItemsList" class="query-result-list">
-            <!-- Cart items will be dynamically populated here -->
-        </div>
-    </section>
-    
 
+    
     <section id="events">
         <h2>Browse Events</h2>
         <!-- Events will be dynamically populated here -->
@@ -286,7 +246,7 @@
                     const imageUrl = eventImages[event.event_id] || 'images/placeholder.jpeg'; 
 
                     eventCard.innerHTML = `
-                        <img src="${imageUrl}" alt="${event.event_name}" style="width:100%; height:auto; border-radius:8px;">
+                        <img src="${imageUrl}" alt="${event.event_name}" style="width: 250px; height: 180px; border-radius: 8px;">
                         <h3>${event.event_name || 'Unknown Event'}</h3>
                         <p>Date: ${formattedDate}</p>
                         <p>Time: ${event.event_time || 'Unknown Time'}</p>
@@ -294,8 +254,6 @@
                         <p>Category: ${event.event_category || 'Unknown Category'}</p>
                         <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
                         <p>Tickets Left: ${event.tickets_left || 0}</p>
-                        <button onclick="addToCart(${event.event_id})">Add to Cart</button>
-                        
                     `;
                     container.appendChild(eventCard);
                 });
@@ -304,57 +262,6 @@
             }
         }
         
-    
-        async function addToCart(eventId) {
-            // Retrieve user ID from local storage
-            const userId = localStorage.getItem('userId');
-
-            if (!userId) {
-                console.error('No user ID found');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ticketId: eventId, userId: userId })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    updateCartSummary();
-                } else {
-                    console.error('Error adding to cart:', result.error);
-                }
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-            }
-        }
-
-
-        async function updateCartSummary() {
-            // Retrieve user ID from local storage
-            const userId = localStorage.getItem('userId');
-
-            if (!userId) {
-                console.error('No user ID found');
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/cart/summary/${userId}`);
-                const cartSummary = await response.json();
-                
-                // Update the cart summary UI
-                document.getElementById('cartItemCount').textContent = cartSummary.count;
-                document.getElementById('cartTotalPrice').textContent = cartSummary.total.toFixed(2);
-            } catch (error) {
-                console.error('Error fetching cart summary:', error);
-            }
-        }
 
 
         function checkout() {
