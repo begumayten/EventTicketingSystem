@@ -185,16 +185,16 @@
         
         function displayEvents(containerId, events) {
             const container = document.getElementById(containerId);
-    
+        
             if (Array.isArray(events)) {
                 container.innerHTML = ''; // Clear previous content
-    
+        
                 events.forEach(event => {
                     const eventCard = document.createElement('div');
                     eventCard.className = 'event-card';
-    
+        
                     const formattedDate = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'Unknown Date';
-    
+        
                     eventCard.innerHTML = `
                         <h3>${event.event_name || 'Unknown Event'}</h3>
                         <p>Date: ${formattedDate}</p>
@@ -202,6 +202,7 @@
                         <p>Address: ${event.event_adress || 'Unknown Address'}</p>
                         <p>Category: ${event.event_category || 'Unknown Category'}</p>
                         <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
+                        <p>Tickets Left: ${event.tickets_left || 0}</p>
                     `;
                     container.appendChild(eventCard);
                 });
@@ -209,6 +210,7 @@
                 container.innerHTML = '<p>No events available</p>';
             }
         }
+        
     
         async function addToCart(eventId) {
             // Implement adding an item to the cart

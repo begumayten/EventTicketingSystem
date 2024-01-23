@@ -43,23 +43,37 @@ app.get('/index', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-
+// Get all events
 app.get('/api/events', async (req, res) => {
     try {
-    const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.query(`
-        SELECT DISTINCT E.*, T.ticket_price
-        FROM Event E
-        JOIN Event_Has_Tickets EHT ON E.event_id = EHT.event_id
-        JOIN Ticket T ON EHT.ticket_id = T.ticket_id
-    `);
-    connection.end();
-    res.json(rows);
+        const connection = await mysql.createConnection(dbConfig);
+
+        const [rows] = await connection.query(`
+            SELECT DISTINCT E.*, T.ticket_price,
+                (SELECT COUNT(*) FROM Event_Has_Tickets WHERE event_id = E.event_id) AS total_tickets,
+                (SELECT COUNT(*) FROM Transaction TR
+                    JOIN Ticket TK ON TR.ticket_id = TK.ticket_id
+                    JOIN Event_Has_Tickets EHT ON TK.ticket_id = EHT.ticket_id
+                    WHERE EHT.event_id = E.event_id) AS sold_tickets
+            FROM Event E
+            JOIN Event_Has_Tickets EHT ON E.event_id = EHT.event_id
+            JOIN Ticket T ON EHT.ticket_id = T.ticket_id
+        `);
+
+        connection.end();
+
+        const eventsWithTicketsLeft = rows.map(event => ({
+            ...event,
+            tickets_left: event.total_tickets - event.sold_tickets
+        }));
+
+        res.json(eventsWithTicketsLeft);
     } catch (error) {
-    console.error('Error fetching events:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error fetching events:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 // Get the history of events a user has tickets for
 app.get('/api/user-event-history/:userId', async (req, res) => {
