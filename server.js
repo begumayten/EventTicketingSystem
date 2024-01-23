@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
-    password: 'emre12',
+    password: '30112619Gulsah',
     database: 'ticket',
 };
 
@@ -82,6 +82,10 @@ app.get('/index', (req, res) => {
 });
 
 
+app.get('/cart', (req, res) => {
+    res.sendFile(__dirname + '/cart.html');
+});
+
 // Get all events
 app.get('/api/events', async (req, res) => {
     try {
@@ -112,6 +116,81 @@ app.get('/api/events', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+// Add to cart endpoint
+app.post('/api/cart/add', async (req, res) => {
+    const { ticketId, userId } = req.body;
+    if (!ticketId || !userId) {
+        return res.status(400).json({ error: 'Missing ticketId or userId' });
+    }
+
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+        await connection.beginTransaction();
+
+        // Add logic to check if the ticket is available before adding
+        // ...
+
+        // Assuming 'Cart' is your table for storing cart data
+        await connection.query('INSERT INTO Cart (user_id, ticket_id) VALUES (?, ?)', [userId, ticketId]);
+
+        await connection.commit();
+        connection.end();
+
+        res.json({ success: true, message: 'Ticket added to cart' });
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Remove from cart endpoint
+app.post('/api/cart/remove', async (req, res) => {
+    const { ticketId, userId } = req.body;
+    if (!ticketId || !userId) {
+        return res.status(400).json({ error: 'Missing ticketId or userId' });
+    }
+
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+
+        // Logic to remove the ticket from the user's cart
+        await connection.query('DELETE FROM Cart WHERE user_id = ? AND ticket_id = ?', [userId, ticketId]);
+
+        connection.end();
+        res.json({ success: true, message: 'Ticket removed from cart' });
+    } catch (error) {
+        console.error('Error removing from cart:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Get cart summary endpoint
+app.get('/api/cart/summary/:userId', async (req, res) => {
+    const { userId } = req.params;
+    if (!userId) {
+        return res.status(400).json({ error: 'Missing userId' });
+    }
+
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+
+        const [rows] = await connection.query(`
+            SELECT COUNT(*) AS count, SUM(T.ticket_price) AS total 
+            FROM Cart C 
+            JOIN Ticket T ON C.ticket_id = T.ticket_id 
+            WHERE C.user_id = ?
+        `, [userId]);
+
+        connection.end();
+        res.json({ total: rows[0].total, count: rows[0].count });
+    } catch (error) {
+        console.error('Error fetching cart summary:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 
 // Get the history of events a user has tickets for
