@@ -11,7 +11,6 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-// Serve static files (images in this case) from the "images" directory
 app.use('/images', express.static('images'));
 
 
@@ -32,7 +31,7 @@ const sessionStore = new MySQLStore({
 });
 
 app.use(session({
-    secret: 'your-secret-key', // Change this to a random, secure string
+    secret: 'your-secret-key', 
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
@@ -79,7 +78,6 @@ app.get('/index', (req, res) => {
         res.redirect('/');
         return;
     }
-
     // Render the index.html page and pass the user ID to the template
     res.sendFile(__dirname + '/index.html');
 });

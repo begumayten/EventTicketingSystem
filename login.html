@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Event Ticketing System</title>
     <style>
-        /* Your CSS styles for login page here */
         body {
             font-family: Arial, sans-serif;
             background-color: #121212;
@@ -72,21 +71,17 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
-            <!-- Change button type to submit -->
             <button type="submit">Login</button>
         </form>
     </div>
 
     <script>
-        // Your JavaScript code for login page here
-
         document.getElementById('loginForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Add logic to send a login request to the server
             fetch('/login', {
                 method: 'POST',
                 headers: {
@@ -97,15 +92,13 @@
             .then(response => {
                 if (response.ok) {
                     console.log('Login successful. Redirecting to /index');
-                    window.location.href = '/index'; // Redirect to /index upon successful login
+                    window.location.href = '/index'; 
                 } else {
                     console.log('Login unsuccessful. Please try again.');
-                    // Add logic to handle unsuccessful login
                 }
             })
             .catch(error => {
                 console.error('Error during login:', error);
-                // Add logic to handle errors
             });
         });
     </script>

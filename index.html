@@ -41,14 +41,13 @@
 
         .query-result {
             margin-top: 20px;
-            text-align: left; /* Align content to the left */
+            text-align: left; 
         }
     
-        /* Updated style for query result items */
         .query-result-list {
             display: flex;
             flex-wrap: wrap;
-            justify-content: flex-start; /* Align items to the left */
+            justify-content: flex-start; 
         }
 
         .query-result-item {
@@ -62,8 +61,6 @@
             border-radius: 8px; 
         }
 
-       
-
     </style>
 </head>
 
@@ -76,42 +73,40 @@
     
     <section id="events">
         <h2>Browse Events</h2>
-        <!-- Events will be dynamically populated here -->
     </section>
 
-    <!-- New sections for displaying query results -->
     <section id="userEventHistory" class="query-result">
         <h2>User Event History</h2>
         <div id="userEventHistoryList" class="query-result-list">
-            <!-- User event history will be dynamically populated here -->
+            <!-- User event history is dynamically populated here -->
         </div>
     </section>
 
     <section id="eventTotalRevenue" class="query-result">
         <h2>Event Total Revenue</h2>
         <div id="eventTotalRevenueList" class="query-result-list">
-            <!-- Event total revenue will be dynamically populated here -->
+            <!-- Event total revenue is dynamically populated here -->
         </div>
     </section>
 
     <section id="eventsAboveAveragePrice" class="query-result">
         <h2>Events Above Average Price</h2>
         <div id="eventsAboveAveragePriceList" class="query-result-list">
-            <!-- Events above average price will be dynamically populated here -->
+            <!-- Events above average price is dynamically populated here -->
         </div>
     </section>
 
     <section id="eventsWithNoTicketsSold" class="query-result">
         <h2>Events With No Tickets Sold</h2>
         <div id="eventsWithNoTicketsSoldList" class="query-result-list">
-            <!-- Events with no tickets sold will be dynamically populated here -->
+            <!-- Events with no tickets sold is dynamically populated here -->
         </div>
     </section>
 
     <section id="usersWhoBoughtConcertTickets" class="query-result">
         <h2>Users Who Bought Concert Tickets</h2>
         <div id="usersWhoBoughtConcertTicketsList" class="query-result-list">
-            <!-- Users who bought concert tickets will be dynamically populated here -->
+            <!-- Users who bought concert tickets is dynamically populated here -->
         </div>
     </section>
 
@@ -161,7 +156,7 @@
             const container = document.getElementById(containerId);
         
             if (Array.isArray(data)) {
-                container.innerHTML = ''; // Clear previous content
+                container.innerHTML = ''; 
         
                 data.forEach(event => {
                     const itemElement = document.createElement('div');
@@ -181,9 +176,8 @@
             const container = document.getElementById(containerId);
         
             if (containerId === 'usersWhoBoughtConcertTicketsList') {
-                // Display only user names
                 if (Array.isArray(data)) {
-                    container.innerHTML = ''; // Clear previous content
+                    container.innerHTML = ''; 
         
                     data.forEach(item => {
                         const itemElement = document.createElement('div');
@@ -197,7 +191,7 @@
             } else {
                 // Display events
                 if (Array.isArray(data)) {
-                    container.innerHTML = ''; // Clear previous content
+                    container.innerHTML = ''; 
         
                     data.forEach(event => {
                         const eventCard = document.createElement('div');
@@ -237,7 +231,7 @@
             const container = document.getElementById(containerId);
         
             if (Array.isArray(events)) {
-                container.innerHTML = ''; // Clear previous content
+                container.innerHTML = ''; 
         
                 events.forEach(event => {
                     const eventCard = document.createElement('div');
@@ -266,11 +260,9 @@
 
 
         function checkout() {
-            // Implement the checkout functionality
             console.log('Checkout button clicked');
         }
-    
-        // Call the fetchAndDisplayData function when the page loads
+        
         window.addEventListener('load', fetchAndDisplayData);
     </script>
     
