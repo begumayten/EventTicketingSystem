@@ -3,8 +3,7 @@
 ## Setup and Running Instructions
 
 1. **Import Tables to MySQL:**
-   - Import the provided SQL script to create the necessary tables in MySQL.
-   - Make sure to adjust the script and replace any placeholders with your actual data.
+   - Import the provided SQL scripts to create the necessary tables and load data in MySQL, or import the provided tables directly.
 
 2. **Update Database Password:**
    - Open `server.js` in your code editor.
@@ -25,4 +24,4 @@
    - Go to [http://localhost:3000/](http://localhost:3000/) to access the application.
 
 5. **Logging In:**
-   - Use the usernames and corresponding passwords from the "insert into" statements in your MySQL script for logging in.
+   - Use the usernames and corresponding passwords from the "insert into" statements in MySQL script for logging in.
