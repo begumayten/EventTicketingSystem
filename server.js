@@ -11,11 +11,14 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+// Serve static files (images in this case) from the "images" directory
+app.use('/images', express.static('images'));
+
 
 const dbConfig = {
     host: '127.0.0.1',
     user: 'root',
-    password: '30112619Gulsah',
+    password: 'emre12',
     database: 'ticket',
 };
 
