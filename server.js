@@ -99,26 +99,25 @@ app.get('/api/user-event-history/:userId', async (req, res) => {
     }
 });
 
-// Calculates the total revenue generated from ticket sales for a specific event
-app.get('/api/event-total-revenue/:eventId', async (req, res) => {
+// Calculates the total revenue generated from ticket sales for all events
+app.get('/api/all-event-total-revenue', async (req, res) => {
     try {
-        const eventId = req.params.eventId;
         const connection = await mysql.createConnection(dbConfig);
         const [rows] = await connection.query(`
-            SELECT E.event_name, SUM(T.ticket_price) AS Total_Revenue
+            SELECT E.event_id, E.event_name, SUM(T.ticket_price) AS Total_Revenue
             FROM Event E
             JOIN Event_Has_Tickets EHT ON E.event_id = EHT.event_id
             JOIN Ticket T ON EHT.ticket_id = T.ticket_id
-            WHERE E.event_id = ?
-            GROUP BY E.event_name
-        `, [eventId]);
+            GROUP BY E.event_id, E.event_name
+        `);
         connection.end();
         res.json(rows);
     } catch (error) {
-        console.error('Error fetching event total revenue:', error);
+        console.error('Error fetching all events total revenue:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 // Gets events that have at least one ticket priced above the average price of all tickets
 app.get('/api/events-above-average-price', async (req, res) => {

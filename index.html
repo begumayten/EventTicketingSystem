@@ -116,11 +116,11 @@
                 const userEventHistoryData = await userEventHistoryResponse.json();
                 displayData('userEventHistoryList', userEventHistoryData);
     
-                // Fetch data for event total revenue
-                const eventTotalRevenueResponse = await fetch('/api/event-total-revenue/1'); // Replace '1' with the actual event ID
-                const eventTotalRevenueData = await eventTotalRevenueResponse.json();
-                displayData('eventTotalRevenueList', eventTotalRevenueData);
-    
+                // Fetch data for event total revenue for all events
+                const allEventTotalRevenueResponse = await fetch('/api/all-event-total-revenue');
+                const allEventTotalRevenueData = await allEventTotalRevenueResponse.json();
+                displayRevenue('eventTotalRevenueList', allEventTotalRevenueData);
+
                 // Fetch data for events above average price
                 const eventsAboveAveragePriceResponse = await fetch('/api/events-above-average-price');
                 const eventsAboveAveragePriceData = await eventsAboveAveragePriceResponse.json();
@@ -140,6 +140,26 @@
                 console.error('Error fetching and displaying data:', error);
             }
         }
+        function displayRevenue(containerId, data) {
+            const container = document.getElementById(containerId);
+        
+            if (Array.isArray(data)) {
+                container.innerHTML = ''; // Clear previous content
+        
+                data.forEach(event => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'query-result-item';
+                    itemElement.innerHTML = `
+                        <p>Event: ${event.event_name || 'Unknown Event'}</p>
+                        <p>Total Revenue: $${(event.Total_Revenue || 0).toFixed(2)}</p>
+                    `;
+                    container.appendChild(itemElement);
+                });
+            } else {
+                container.innerHTML = '<p>No data available</p>';
+            }
+        }
+        
         function displayData(containerId, data) {
             const container = document.getElementById(containerId);
         
