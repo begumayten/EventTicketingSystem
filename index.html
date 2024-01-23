@@ -142,26 +142,48 @@
         }
         function displayData(containerId, data) {
             const container = document.getElementById(containerId);
-    
-            if (Array.isArray(data)) {
-                container.innerHTML = ''; // Clear previous content
-    
-                data.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = 'query-result-item';
-    
-                    // Display only user names
-                    itemElement.innerHTML = `
-                        <p>${item.user_name || 'Unknown User'}</p>
-                    `;
-    
-                    container.appendChild(itemElement);
-                });
+        
+            if (containerId === 'usersWhoBoughtConcertTicketsList') {
+                // Display only user names
+                if (Array.isArray(data)) {
+                    container.innerHTML = ''; // Clear previous content
+        
+                    data.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'query-result-item';
+                        itemElement.innerHTML = `<p>${item.user_name || 'Unknown User'}</p>`;
+                        container.appendChild(itemElement);
+                    });
+                } else {
+                    container.innerHTML = '<p>No data available</p>';
+                }
             } else {
-                container.innerHTML = '<p>No data available</p>';
+                // Display events
+                if (Array.isArray(data)) {
+                    container.innerHTML = ''; // Clear previous content
+        
+                    data.forEach(event => {
+                        const eventCard = document.createElement('div');
+                        eventCard.className = 'event-card';
+        
+                        const formattedDate = event.event_date ? new Date(event.event_date).toLocaleDateString() : 'Unknown Date';
+        
+                        eventCard.innerHTML = `
+                            <h3>${event.event_name || 'Unknown Event'}</h3>
+                            <p>Date: ${formattedDate}</p>
+                            <p>Time: ${event.event_time || 'Unknown Time'}</p>
+                            <p>Address: ${event.event_address || 'Unknown Address'}</p>
+                            <p>Category: ${event.event_category || 'Unknown Category'}</p>
+                            <p>Price: $${(event.ticket_price || 0).toFixed(2)}</p>
+                        `;
+                        container.appendChild(eventCard);
+                    });
+                } else {
+                    container.innerHTML = '<p>No events available</p>';
+                }
             }
         }
-
+        
         function displayEvents(containerId, events) {
             const container = document.getElementById(containerId);
     
