@@ -1,4 +1,5 @@
 # 🎫 EventTicketingSystem
+**Developers:** Begüm Ayten, Gülşah Arslan
 
 ## 📚 Introduction
 
